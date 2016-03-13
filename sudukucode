@@ -1,0 +1,380 @@
+package solvesuduku;
+
+public class SolveSuduku {
+
+    public static void solve(int[][] arr) {
+        int numbers[];
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                numbers = new int[9];
+                if (arr[i][j] == 0) {
+                    if (i == j) {
+                        if((i+j)==8 && i==j)
+                        continue;
+                        for (int n = 1; n <= 9; n++) {
+                            if (!isfoundinsquar(arr, n, firstrow(i), firstcolmn(j)) && !isfoundincolumn(arr, n, j) && !isfoundinrow(arr, n, i) ) {
+                                addtoarray(numbers, n);
+                            }
+                        }
+                        if (haveONEnumber(numbers)) {
+                            arr[i][j] = numbers[0];
+                        }
+                    } else if ((i + j) == 8) {
+                        if((i+j)==8 && i==j)
+                        continue;
+                        for (int n = 1; n <= 9; n++) {
+                            if (!isfoundinsquar(arr, n, firstrow(i), firstcolmn(j)) && !isfoundincolumn(arr, n, j) && !isfoundinrow(arr, n, i) ) {
+                                addtoarray(numbers, n);
+                            }
+                        }
+                        if (haveONEnumber(numbers)) {
+                            arr[i][j] = numbers[0];
+                        }
+                    } else {
+                        if((i+j)==8 && i==j)
+                        continue;
+                        for (int n = 1; n <= 9; n++) {
+                            if (!isfoundinsquar(arr, n, firstrow(i), firstcolmn(j)) && !isfoundincolumn(arr, n, j) && !isfoundinrow(arr, n, i)) {
+                                addtoarray(numbers, n);
+                            }
+                        }
+                        if (haveONEnumber(numbers)) {
+                            arr[i][j] = numbers[0];
+                        }
+                    }
+                }
+
+            }
+        }
+        SOLVElastOne(arr);
+       
+        if(CHECKall(arr)==1){
+            arr[4][4]=whichMISSEDnumINrow(arr, 4);
+        }
+    }
+
+    public static void SOLVElastOne(int[][] arr) {
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                if(arr[i][j]==0){
+                    if((i+j)==8 || i==j){   
+                        if((i+j)==8 && i==j)
+                        continue;
+                         if(isthereonezeroINsquar(arr, firstrow(i), firstcolmn(j))){arr[i][j]=whichMISSEDnumINsquar(arr, i, j);}
+                        else if(isthereONEzeroINrow(arr, i)){arr[i][j]=whichMISSEDnumINrow(arr, i);}
+                        else if(isthereONEzeroINcolumn(arr, j)) {arr[i][j]=whichMISSEDnumINcolumn(arr, j);}
+                    }
+                    else{
+                        if((i+j)==8 && i==j)
+                        continue;
+                        if(isthereonezeroINsquar(arr, firstrow(i), firstcolmn(j))){arr[i][j]=whichMISSEDnumINsquar(arr, i, j);}
+                        else if(isthereONEzeroINrow(arr, i)){arr[i][j]=whichMISSEDnumINrow(arr, i);}
+                        else if(isthereONEzeroINcolumn(arr, j)){arr[i][j]=whichMISSEDnumINcolumn(arr, j);}
+                    }
+                }
+            }
+        }
+    }
+
+    public static void addtoarray(int[] arr, int num) {
+        for (int i = 0; i < arr.length; i++) {
+            if (arr[i] == 0) {
+                arr[i] = num;
+                break;
+            }
+        }
+    }
+
+    public static boolean haveONEnumber(int[] arr) {
+        if (arr[1] == 0) {
+            return true;
+        }
+        return false;
+    }
+
+    public static int whichMISSEDnumINrow(int [][] arr,int row){
+        
+        for(int n=1;n<=9;n++){
+        if(!isfoundinrow(arr, n, row))
+            return n;
+            
+        }
+         return -1;
+    }
+    public static int whichMISSEDnumINcolumn(int [][] arr,int column){
+        
+        for(int n=1;n<=9;n++){
+        if(!isfoundincolumn(arr, n, column))
+            return n;
+            
+        }
+         return -1;
+    }
+    public static int whichMISSEDnumINsquar(int[][] arr,  int row, int column) { //0,3
+        for(int n=1;n<=9;n++){
+            if(!isfoundinsquar(arr, n, firstrow(row), firstcolmn(column)))
+                return n;
+        }
+            return -1;
+    }
+    
+   
+    
+    public static int firstrow(int row) {
+        if (row < 3) {
+            return 0;
+        } else if (row >= 3 && row < 6) {
+            return 3;
+        } else {
+            return 6;
+        }
+
+    }
+    public static int firstcolmn(int column) {
+        if (column < 3) {
+            return 0;
+        } else if (column >= 3 && column < 6) {
+            return 3;
+        } else {
+            return 6;
+        }
+
+    }
+    public static int checkrow(int row) {
+        if (row < 3) {
+            return 3;
+        } else if (row >= 3 && row < 6) {
+            return 6;
+        } else {
+            return 9;
+        }
+
+    }
+    public static int checkcolumn(int column) {
+        if (column < 3) {
+            return 3;
+        } else if (column >= 3 && column < 6) {
+            return 6;
+        } else {
+            return 9;
+        }
+
+    }
+
+    public static boolean isrepeatedinrow(int[][] Arr, int row, int column) {
+        for (int i = column + 1; i < 9; i++) {
+            if (Arr[row][column] == Arr[row][i]) //arr[0,1]==arr[0,0]?
+            {
+                return true;
+            }
+        }
+        for (int i = column - 1; i >= 0; i--) {
+            if (Arr[row][column] == Arr[row][i]) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public static boolean isrepeatedincolumn(int[][] Arr, int row, int column) {
+        for (int i = row + 1; i < 9; i++) {
+            if (Arr[row][column] == Arr[i][column]) //arr[0,1]==arr[0,0]?
+            {
+                return true;
+            }
+        }
+        for (int i = row - 1; i > 0; i--) {
+            if (Arr[row][column] == Arr[i][column]) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public static boolean isrepeatedinsquare(int[][] arr, int row, int column) {
+        int fRow = firstrow(row);
+        int fColumn = firstcolmn(column);
+        int Crow = checkrow(row);
+        int cColumn = checkcolumn(column);
+        for (int i = fRow; i < Crow; i++) {
+            for (int j = fColumn; j < cColumn; j++) {
+                if ((i == row) && (j == column)) {
+                    continue;
+                }
+                if (arr[i][j] == arr[row][column]) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+    
+    
+     
+    
+    public static boolean isfoundinrow(int[][] Arr, int num, int row) {
+        for (int i = 0; i < 9; i++) {
+            if (num == Arr[row][i]) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public static boolean isfoundincolumn(int[][] Arr, int num, int column) {
+        for (int i = 0; i < 9; i++) {
+            if (num == Arr[i][column]) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public static boolean isfoundinsquar(int[][] arr, int num, int row, int column) { //0,3
+        for (int i = row; i < row + 3; i++) {
+            for (int j = column; j < column + 3; j++) {
+                if (arr[i][j] == num) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    
+    
+    public static boolean isthereONEzeroINrow(int[][] Arr, int row) {
+        int n = 0;
+        for (int i = 0; i < 9; i++) {
+
+            if (Arr[row][i] == 0) {
+                n++;
+            }
+            if (n > 1) {
+                return false;
+            }
+
+        }
+        return true;
+    }
+    public static boolean isthereONEzeroINcolumn(int[][] Arr, int column) {
+        int n = 0;
+        for (int i = 0; i < 9; i++) {
+
+            if (Arr[i][column] == 0) {
+                n++;
+            }
+            if (n > 1) {
+                return false;
+            }
+
+        }
+        return true;
+    }
+    public static boolean isthereonezeroINsquar(int[][] arr, int row, int column) {
+        int n = 0;
+        for (int i = row; i < row + 3; i++) {
+            for (int j = column; j < column + 3; j++) {
+                if (arr[i][j] == 0) {
+                    n++;
+                    if (n > 1) {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+    public static int CHECKall(int [][]arr){
+        int n=0;
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                 if(arr[i][j]==0)
+                n++; 
+            }
+        }
+        return n;
+     }
+    
+    public static  boolean isOKinALL(int[][] arr, int row, int column) {
+
+        if ((isrepeatedincolumn(arr, row, column)) || (isrepeatedinrow(arr, row, column)) || (isrepeatedinsquare(arr, row, column))) {
+            return false;
+        }
+
+        return true;
+    }
+    public static void showarray(int[][] arr) {
+        System.out.println();
+        System.out.println("+-----------++-----------++-----------+");
+        for (int i = 0; i < 9; i++) {
+            int j;
+            for (j = 0; j < 9; j++) {
+                if (j == 3 || j == 6) {
+                    System.out.print("|| " + arr[i][j] + " ");
+                } else {
+                    System.out.print("| " + arr[i][j] + " ");
+                }
+            }
+            System.out.print("|");
+            if ((j == 3 || j == 6) && (i == 2 || i == 5)) {
+                System.out.print("\n+-----------++-----------++-----------+");
+                System.out.print("\n+-----------++------------------------+");
+            } else if (i == 2 || i == 5) {
+                System.out.print("\n+-----------++-----------++-----------+");
+                System.out.println("\n+-----------++-----------++-----------+");
+            } else if (i == 8) {
+                System.out.print("\n+-----------++-----------++-----------+");
+            } else {
+                System.out.println("\n+-------------------------------------+");
+            }
+
+        }
+    }
+    public static  int howmanyrepeated(int[][] arr, int num) {
+        int count = 0;
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                if (arr[i][j] == num) {
+                    count++;
+                }
+            }
+
+        }
+        return count;
+    }
+    public static void main(String[] args) {
+
+        int[][] sgame = new int[][]{{0, 2, 0, 5, 0, 0, 3, 0, 9},
+        {9, 0, 0, 2, 0, 4, 0, 0, 0},
+        {0, 7, 0, 0, 6, 0, 8, 0, 4},
+        {0, 0, 0, 7, 4, 2, 0, 0, 0},
+        {7, 0, 4, 0, 0, 0, 2, 9, 0},
+        {0, 8, 0, 0, 0, 9, 0, 0, 3},
+        {0, 0, 7, 0, 9, 0, 0, 8, 0},
+        {8, 3, 0, 0, 0, 1, 0, 0, 2},
+        {0, 0, 1, 6, 2, 0, 0, 3, 0}};
+        
+        showarray(sgame);
+        do{
+        solve(sgame);
+        }while(CHECKall(sgame) !=0);
+        System.out.println();
+        showarray(sgame);
+        System.out.println();
+        //==============================
+        boolean ok=false;
+        for(int i=0;i<9;i++){
+            for(int j=0;j<9;j++){
+               ok=isOKinALL(sgame, i, j);
+            }
+        }
+        if(ok)
+            System.out.println("OK");
+        else
+            System.out.println("NOt OK");
+        //==============================
+        System.out.println();
+        
+    }
+
+}
