@@ -1,0 +1,2 @@
+# Sudukugame
+solve suduku game 
